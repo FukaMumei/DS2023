@@ -1,0 +1,57 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+int* kmp_next(string& s) {
+	int k = 0, i, n = s.length(), *next = new int[n]; //k = next[i]
+	next[0] = -1; //用next[0] = -1表示主串指针后移
+	for (i = 1; i < n; i++) {
+		next[i] = k;
+		while (k != -1 && s[i] != s[k]) k = next[k]; //计算next[i + 1]
+		k++;
+	}
+	return next;
+}
+
+int kmp_index(string& a, string& b) {
+	int i, j, *next = kmp_next(b), n = a.length(); //i， j为循环指针变量； n为i的最大范围
+	for (i = j = 0; i <= n; i++, j++) { //每次i都后移， 不回溯
+		if (j == b.length()) { delete[] next; return i - j; }
+		while (j != -1 && a[i] != b[j]) j = next[j]; //回溯j
+	}
+	delete[] next;
+	return -1; //未找到返回-1
+}
+
+int main() {
+	string a = "ababababcababababc";
+	int* next = kmp_next(a);
+
+	for (int i = 0; i < (int)a.length(); i++) { //输出a的next数组
+		cout << next[i] << '\t';
+	}
+
+	string b = "abc";
+	cout << endl << kmp_index(a, b) << endl; //匹配b在a中的位置
+	return 0;
+} 作者：陌风ちゃん https://www.bilibili.com/read/cv15141644 出处：bilibili
+
+
+
+
+
+
+当失配时可以知道a[i] != b[j]。
+
+而next[i]表示的是在b串中，第i位失配后需要将j位移到的下一个位置， 即加下来要比较a[i]和b[next[j]]。如果此时b[j] == b[next[j]]， 接下来的比较其实也是多余的。因此对kmp_next函数可以进行一下改进： 作者：陌风ちゃん https://www.bilibili.com/read/cv15141644 出处：bilibili
+int* kmp_next(string& s) {
+	int k = 0, i, n = s.length(), *next = new int[n];;
+	next[0] = -1; //用next[0] = -1表示主串后移
+	for (i = 1; i < n; i++) {
+		next[i] = k;
+		if (s[i] == s[k]) next[i] = next[k]; //若s[i] == s[k] (s[i] == s[next[i])时， 直接将j移至next[k]即可
+		while (k != -1 && s[i] != s[k]) k = next[k];
+		k++;
+	}
+	return next;
+} 
