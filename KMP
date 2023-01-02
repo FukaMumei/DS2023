@@ -41,15 +41,16 @@ int main() {
 
 
 
-当失配时可以知道a[i] != b[j]。
+/*当失配时可以知道a[i] != b[j]。
+而next[i]表示的是在b串中，第i位失配后需要将j位移到的下一个位置， 即加下来要比较a[i]和b[next[j]]。如果此时b[j] == b[next[j]]， 
+接下来的比较其实也是多余的。因此对kmp_next函数可以进行一下改进： */
 
-而next[i]表示的是在b串中，第i位失配后需要将j位移到的下一个位置， 即加下来要比较a[i]和b[next[j]]。如果此时b[j] == b[next[j]]， 接下来的比较其实也是多余的。因此对kmp_next函数可以进行一下改进： 作者：陌风ちゃん https://www.bilibili.com/read/cv15141644 出处：bilibili
 int* kmp_next(string& s) {
 	int k = 0, i, n = s.length(), *next = new int[n];;
-	next[0] = -1; //用next[0] = -1表示主串后移
+	next[0] = -1; 								//用next[0] = -1表示主串后移
 	for (i = 1; i < n; i++) {
 		next[i] = k;
-		if (s[i] == s[k]) next[i] = next[k]; //若s[i] == s[k] (s[i] == s[next[i])时， 直接将j移至next[k]即可
+		if (s[i] == s[k]) next[i] = next[k]; 				//若s[i] == s[k] (s[i] == s[next[i])时， 直接将j移至next[k]即可
 		while (k != -1 && s[i] != s[k]) k = next[k];
 		k++;
 	}
