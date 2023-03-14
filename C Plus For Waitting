@@ -49,5 +49,4 @@ Private：
 A &operator = (const B &）;
 
 A (const A & );
---
 
